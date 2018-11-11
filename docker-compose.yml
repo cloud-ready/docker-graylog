@@ -1,0 +1,73 @@
+version: '2.1'
+services:
+  develop-graylog:
+    container_name: ${CONTAINER_HOST_NAME:-standalone.graylog}
+    environment:
+    - GRAYLOG_ELASTICSEARCH_HOSTS=${GRAYLOG_ELASTICSEARCH_HOSTS:-http://standalone.elk-elasticsearch:9200}
+    #- GRAYLOG_ELASTICSEARCH_CLUSTER_NAME=${GRAYLOG_ELASTICSEARCH_CLUSTER_NAME:-standalone.elk-elasticsearch}
+    - GRAYLOG_HTTP_EXTERNAL_URI=${GRAYLOG_HTTP_EXTERNAL_URI:-http://127.0.0.1:9000/}
+
+    - GRAYLOG_MONGODB_URI=${GRAYLOG_MONGODB_URI:-mongodb://standalone.mongodb/graylog}
+
+    - GRAYLOG_PASSWORD_SECRET=${GRAYLOG_PASSWORD_SECRET:-somepasswordpepper}
+    - GRAYLOG_ROOT_PASSWORD_SHA2=${GRAYLOG_ROOT_PASSWORD_SHA2:-8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918}
+    # Generate your own password with this command:
+    # OSX
+    # echo -n "Enter Password: " && head -1 </dev/stdin | tr -d '\n' | shasum -a 256 | cut -d" " -f1
+    # linux
+    # echo -n "Enter Password: " && head -1 </dev/stdin | tr -d '\n' | sha256sum | cut -d" " -f1
+
+    #- GRAYLOG_TRANSPORT_EMAIL_ENABLED=true
+    #- GRAYLOG_TRANSPORT_EMAIL_HOSTNAME=smtp
+    #- GRAYLOG_TRANSPORT_EMAIL_PORT=25
+    #- GRAYLOG_TRANSPORT_EMAIL_USE_AUTH=false
+    #- GRAYLOG_TRANSPORT_EMAIL_USE_TLS=false
+    #- GRAYLOG_TRANSPORT_EMAIL_USE_SSL=false
+
+    - GRAYLOG_WEB_ENDPOINT_URI=${GRAYLOG_WEB_ENDPOINT_URI:-http://127.0.0.1:9000/api}
+    hostname: ${CONTAINER_HOST_NAME:-standalone.graylog}
+    image: ${IMAGE_PREFIX:-graylog2/}${IMAGE_NAME:-graylog}:${IMAGE_TAG:-2.4.6-1}
+    labels:
+      deploy.config.commit: ${LABEL_DEPLOY_CONFIG_COMMIT:-unknown}
+      deploy.config.name: ${LABEL_DEPLOY_CONFIG_NAME:-unknown}
+      deploy.config.ref: ${LABEL_DEPLOY_CONFIG_REF:-unknown}
+      deploy.util.commit: ${LABEL_DEPLOY_UTIL_COMMIT:-unknown}
+      deploy.util.ref: ${LABEL_DEPLOY_UTIL_REF:-unknown}
+      instance.name.short: ${LABEL_INSTANCE_NAME_SHORT:-standalone.graylog}
+      instance.name: ${LABEL_INSTANCE_NAME:-127.0.0.1/graylog/standalone}
+    networks:
+      local-network:
+        ipv4_address: 172.16.238.89
+        #ipv6_address: 2001:3984:3989::89
+    ports:
+    # Graylog web interface and REST API
+    - ${EXTERNAL_GRAYLOG_REST_9000_PORT:-9000}:9000
+    # GELF TCP/UDP
+    - ${EXTERNAL_GRAYLOG_GELF_12201_PORT:-12201}:12201
+    - ${EXTERNAL_GRAYLOG_GELF_12201_PORT:-12201}:12201/udp
+    # Syslog TCP/UDP
+    - ${EXTERNAL_GRAYLOG_SYSLOG_514_PORT:-514}:514
+    - ${EXTERNAL_GRAYLOG_SYSLOG_514_PORT:-514}:514/udp
+    restart: always
+    volumes:
+    - ./data/usr/share/graylog/data/config:/usr/share/graylog/data/config:rw
+    - graylog_journal:/usr/share/graylog/data/journal
+
+networks:
+  local-network:
+    external: true
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.238.0/24
+      #- subnet: 2001:3984:3989::/64
+
+volumes:
+  graylog_journal:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/data/usr/share/graylog/data/journal
+      o: bind
