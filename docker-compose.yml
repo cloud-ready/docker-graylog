@@ -37,8 +37,8 @@ services:
       instance.name: ${LABEL_INSTANCE_NAME:-127.0.0.1/graylog/standalone}
     networks:
       local-network:
-        ipv4_address: 172.16.238.89
-        #ipv6_address: 2001:3984:3989::89
+        ipv4_address: ${IPV4_ADDRESS:-172.16.238.89}
+        #ipv6_address: ${IPV6_ADDRESS:-2001:3984:3989::89}
     ports:
     # Graylog web interface and REST API
     - ${EXTERNAL_GRAYLOG_REST_9000_PORT:-9000}:9000
