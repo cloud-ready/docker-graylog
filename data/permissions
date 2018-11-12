@@ -1,0 +1,6 @@
+
+d usr/share/graylog/data/config              1000:1000 777
+d usr/share/graylog/data/journal             1000:1000 777
+
+f usr/share/graylog/data/config/graylog.conf 1000:1000 777
+f usr/share/graylog/data/config/log4j2.xml   1000:1000 777
