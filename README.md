@@ -26,3 +26,14 @@ db.createUser(
 
 exit
 ```
+
+
+kafka.common.KafkaException: Failed to acquire lock on file .lock in /usr/share/graylog/data/journal.
+A Kafka instance in another process or thread is using this directory.
+
+```bash
+rm -f /var/opt/graylog/data/journal/.lock
+rm -f /var/opt/graylog/data/journal/.kafka_cleanshutdown
+```
+
+If not works, you need to delete every thing within /var/opt/graylog/data/journal directory.
