@@ -10,6 +10,7 @@ services:
     - GRAYLOG_MONGODB_URI=${GRAYLOG_MONGODB_URI:-mongodb://standalone.mongodb/graylog}
 
     - GRAYLOG_PASSWORD_SECRET=${GRAYLOG_PASSWORD_SECRET:-somepasswordpepper}
+    - GRAYLOG_REST_ENABLE_CORS=${GRAYLOG_REST_ENABLE_CORS:-true}
     - GRAYLOG_ROOT_PASSWORD_SHA2=${GRAYLOG_ROOT_PASSWORD_SHA2:-8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918}
     # Generate your own password with this command:
     # OSX
@@ -23,6 +24,7 @@ services:
     #- GRAYLOG_TRANSPORT_EMAIL_USE_AUTH=false
     #- GRAYLOG_TRANSPORT_EMAIL_USE_TLS=false
     #- GRAYLOG_TRANSPORT_EMAIL_USE_SSL=false
+    - GRAYLOG_WEB_ENABLE_CORS=${GRAYLOG_WEB_ENABLE_CORS:-true}
 
     - GRAYLOG_WEB_ENDPOINT_URI=${GRAYLOG_WEB_ENDPOINT_URI:-http://127.0.0.1:9000/api}
     hostname: ${CONTAINER_HOST_NAME:-standalone.graylog}
